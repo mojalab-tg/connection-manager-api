@@ -25,14 +25,13 @@ const DFSPModel = require('../models/DFSPModel');
  * Creates a CSR, signed by the environment CA.
  * Creates an OutboundEnrollment, associate the CSR to it, and set its state to CSR_LOADED.
  */
-exports.createCSRAndDFSPOutboundEnrollment = async (ctx, dfspId) => {
+exports.createCSRAndDFSPOutboundEnrollment = async (ctx, dfspId, body) => {
   await PkiService.validateDfsp(ctx, dfspId);
 
   const { pkiEngine } = ctx;
 
   const { csr, privateKey } = await pkiEngine.createCSR();
   const csrInfo = pkiEngine.getCSRInfo(csr);
-
   const values = {
     id: await createID(),
     csr,
@@ -40,8 +39,9 @@ exports.createCSRAndDFSPOutboundEnrollment = async (ctx, dfspId) => {
     state: 'CSR_LOADED',
     key: privateKey,
   };
-
+  // console.log('createCSRAndDFSPOutboundEnrollment csr', csr);
   const dbDfspId = await DFSPModel.findIdByDfspId(dfspId);
+  // await pkiEngine.createCSRAndSignWithVault(csr, privateKey, dfspId, dbDfspId);
   await pkiEngine.setDFSPOutboundEnrollment(dbDfspId, values.id, values);
   const { key, ...en } = values;
   return en;

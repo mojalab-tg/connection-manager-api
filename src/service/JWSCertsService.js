@@ -24,6 +24,7 @@ const ValidationError = require('../errors/ValidationError');
 const { switchId } = require('../constants/Constants');
 
 exports.createDfspJWSCerts = async (ctx, dfspId, body) => {
+  console.log('createDfspJWSCerts');
   if (body === null || typeof body === 'undefined') {
     throw new ValidationError(`Invalid body ${body}`);
   }
@@ -45,6 +46,7 @@ exports.createDfspJWSCerts = async (ctx, dfspId, body) => {
 };
 
 exports.createDfspExternalJWSCerts = async (ctx, body, sourceDfspId) => {
+  console.log('createDfspExternalJWSCerts');
   if (body === null || typeof body === 'undefined' || !Array.isArray(body) || body.length === 0) {
     throw new ValidationError(`Invalid body ${body}`);
   }

@@ -38,7 +38,7 @@ if (process.env.TEST) {
     VAULT_PKI_SERVER_ROLE: 'example.com'
   };
 }
-
+// console.log(`process.env`, process.env)
 const env = from(process.env, {
   asFileContent: (path) => getFileContent(path),
   asFileListContent: (pathList) => pathList.split(',').map((path) => getFileContent(path)),
@@ -46,7 +46,8 @@ const env = from(process.env, {
   asTextFileContent: (path) => getFileContent(path).toString().trim(),
 });
 
-const vaultAuthMethod = env.get('VAULT_AUTH_METHOD').required().asEnum(['K8S', 'APP_ROLE']);
+const vaultAuthMethod = env.get('VAULT_AUTH_METHOD').required().default(`APP_ROLE`).asEnum(['K8S', 'APP_ROLE']);
+
 let vaultAuth;
 if (vaultAuthMethod === 'K8S') {
   vaultAuth = {
@@ -61,8 +62,8 @@ if (vaultAuthMethod === 'K8S') {
     appRole: {
       // Generated per: https://www.vaultproject.io/docs/auth/approle#via-the-cli-1
       // Or: https://github.com/kr1sp1n/node-vault/blob/70097269d35a58bb560b5290190093def96c87b1/example/auth_approle.js
-      roleId: env.get('VAULT_ROLE_ID_FILE').default('/vault/role-id').asTextFileContent(),
-      roleSecretId: env.get('VAULT_ROLE_SECRET_ID_FILE').default('/vault/role-secret-id').asTextFileContent(),
+      roleId: env.get('VAULT_ROLE_ID_FILE').default('../docker/vault/role-id').asTextFileContent(),
+      roleSecretId: env.get('VAULT_ROLE_SECRET_ID_FILE').default('../docker/vault/secret-id').asTextFileContent(),
     },
   };
 }
@@ -141,10 +142,10 @@ module.exports = {
       .asInt(),
   },
   switchFQDN: env.get('SWITCH_FQDN').default('switch.example.com').asString(),
-  switchId: env.get('SWITCH_ID').required().asString(),
+  switchId: env.get('SWITCH_ID').required().default('example.com').asString(),
 
   vault: {
-    endpoint: env.get('VAULT_ENDPOINT').default('http://127.0.0.1:8233').asString(),
+    endpoint: env.get('VAULT_ENDPOINT').default('http://vault-dev:8233').asString(),
     mounts: {
       pki: env.get('VAULT_MOUNT_PKI').default('pki').asString(),
       intermediatePki: env.get('VAULT_MOUNT_INTERMEDIATE_PKI').default('pki_int').asString(),

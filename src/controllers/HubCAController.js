@@ -21,21 +21,25 @@ const utils = require('../utils/writer');
 const HubCAService = require('../service/HubCAService');
 
 exports.createInternalHubCA = (req, res, next, body) => {
+  console.log('createInternalHubCA');
   HubCAService.createInternalHubCA(req.context, body)
     .then(response => {
       utils.writeJson(res, response);
     })
     .catch(response => {
+      console.log('createInternalHubCA', response);
       utils.writeJson(res, response, response.status);
     });
 };
 
 exports.createExternalHubCA = (req, res, next, body) => {
+  console.log('createExternalHubCA');
   HubCAService.createExternalHubCA(req.context, body)
     .then(response => {
       utils.writeJson(res, response);
     })
     .catch(response => {
+      console.log('createExternalHubCA', response);
       utils.writeJson(res, response, response.status);
     });
 };

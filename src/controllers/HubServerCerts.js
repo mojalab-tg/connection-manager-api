@@ -21,6 +21,7 @@ const utils = require('../utils/writer.js');
 const ServerCertsService = require('../service/ServerCertsService');
 
 exports.createHubServerCerts = (req, res, next) => {
+  console.log('createHubServerCerts');
   ServerCertsService.createHubServerCerts(req.context)
     .then(response => {
       utils.writeJson(res, response);

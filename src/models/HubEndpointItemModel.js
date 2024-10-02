@@ -22,6 +22,7 @@ const InternalError = require('../errors/InternalError');
 const ENDPOINT_ITEMS_TABLE = 'hub_endpoint_items';
 
 exports.findById = async (id) => {
+  console.log('findById id', id);
   const rows = await knex.table(ENDPOINT_ITEMS_TABLE).where('id', id).select();
   if (rows.length === 0) {
     throw new NotFoundError('Item with id: ' + id);
@@ -45,6 +46,7 @@ const rowToObject = (rawObject) => {
  * Gets an endpoint by its id, and parses the JSON in value, returning an Object
  */
 exports.findObjectById = async (id) => {
+  console.log(`findObjectById ${id}`);
   const rawObject = await exports.findById(id);
   return rowToObject(rawObject);
 };
@@ -52,6 +54,7 @@ exports.findObjectById = async (id) => {
 exports.findObjectAll = async () => {
   const rawObjects = await knex.table(ENDPOINT_ITEMS_TABLE)
     .select();
+    console.log('rawObjects', rawObjects);
   return rawObjects.map(row => rowToObject(row));
 };
 
