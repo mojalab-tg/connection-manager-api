@@ -254,7 +254,7 @@ class VaultPKIEngine extends PKIEngine {
   }
 
   async getDFSPCA (dfspId) {
-    // this.validateId(dfspId, 'dfspId');
+    this.validateId(dfspId, 'dfspId');
     
     return this.getSecret(`${vaultPaths.DFSP_CA}/${dfspId}`);
   }
@@ -346,7 +346,7 @@ class VaultPKIEngine extends PKIEngine {
     const dfspCA = await this.getDFSPCA(dfspId);
     console.log('populateDFSPClientCertBundle dfspCA',dfspCA);
     const enrollments = await this.getDFSPOutboundEnrollments(dfspId);
-    console.log('populateDFSPClientCertBundle enrollments',enrollments);
+    console.log('populateDFSPClientCertBundle dfspCA',enrollments);
     const dfspClientCert = enrollments
       .filter((en) => en.state === 'CERT_SIGNED')
       .sort((a, b) => b.id - a.id)[0];

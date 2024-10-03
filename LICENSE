@@ -1,4 +1,4 @@
-vault write auth/approle/role/dfsp-ca \
+vault write auth/approle/role/app_role \
   secret_id_ttl=168h \
   token_num_uses=10 \
   token_ttl=168h \
