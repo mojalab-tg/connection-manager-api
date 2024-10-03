@@ -24,7 +24,7 @@ get_addr () {
 }
 
 if [ -n "$VAULT_REDIRECT_INTERFACE" ]; then
-    export VAULT_REDIRECT_ADDR=$(get_addr $VAULT_REDIRECT_INTERFACE ${VAULT_REDIRECT_ADDR:-"http://0.0.0.0:8200"})
+    export VAULT_REDIRECT_ADDR=$(get_addr $VAULT_REDIRECT_INTERFACE ${VAULT_REDIRECT_ADDR:-"http://0.0.0.0:8233"})
     echo "Using $VAULT_REDIRECT_INTERFACE for VAULT_REDIRECT_ADDR: $VAULT_REDIRECT_ADDR"
 fi
 if [ -n "$VAULT_CLUSTER_INTERFACE" ]; then
@@ -57,7 +57,7 @@ if [ "$1" = 'server' ]; then
     set -- vault server \
         -config="$VAULT_CONFIG_DIR" \
         -dev-root-token-id="$VAULT_DEV_ROOT_TOKEN_ID" \
-        -dev-listen-address="${VAULT_DEV_LISTEN_ADDRESS:-"0.0.0.0:8200"}" \
+        -dev-listen-address="${VAULT_DEV_LISTEN_ADDRESS:-"0.0.0.0:8233"}" \
         "$@"
 elif [ "$1" = 'version' ]; then
     # This needs a special case because there's no help output.
