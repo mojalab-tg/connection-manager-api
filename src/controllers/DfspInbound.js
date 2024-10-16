@@ -51,6 +51,7 @@ exports.getDFSPInboundEnrollment = (req, res, next, dfspId, enId) => {
 };
 
 exports.signDFSPInboundEnrollment = (req, res, next, dfspId, enId) => {
+  
   DfspInbound.signDFSPInboundEnrollment(req.context, dfspId, enId)
     .then(function (response) {
       utils.writeJson(res, response);

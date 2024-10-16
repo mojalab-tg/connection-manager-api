@@ -19,7 +19,7 @@ const utils = require('../utils/writer.js');
 const JWSCertsService = require('../service/JWSCertsService');
 
 exports.createDfspJWSCerts = (req, res, next, body, dfspId) => {
-  console.log('createDfspJWSCerts');
+  console.log('createDfspJWSCerts', body);
   JWSCertsService.createDfspJWSCerts(req.context, dfspId, body)
     .then(response => {
       utils.writeJson(res, response);

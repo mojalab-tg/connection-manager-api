@@ -153,7 +153,7 @@ EOF
 
 vault policy write test-policy policy.hcl
 
-vault write auth/approle/role/my-role policies=test-policy ttl=1h
+vault write auth/approle/role/my-role policies=test-policy ttl=24h
 
 vault secrets enable -path=pki_int pki
 vault secrets tune -max-lease-ttl=43800h pki_int

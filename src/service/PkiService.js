@@ -122,6 +122,7 @@ exports.getDFSPById = async (ctx, dfspId) => {
   if (dfspId === null || typeof dfspId === 'undefined') {
     throw new ValidationError(`Invalid dfspId ${dfspId}`);
   }
+  console.log('getDFSPById dfspId', dfspId);
   try {
     const result = await DFSPModel.findByDfspId(dfspId);
     return dfspRowToObject(result);
@@ -175,7 +176,9 @@ exports.deleteDFSP = async (ctx, dfspId) => {
  * rootCertificate: a root certificate used by the DFSP. Can be a self-signed certificate, or a globally trusted CA like Digicert.
  * intermediateChain: list of intermediate certificates.
  */
-exports.setDFSPca = async (ctx, dfspId, body) => {
+// custom
+exports.setDFSPca = async (ctx,body, dfspId) => {
+  console.log('setDFSPca pki service =====', dfspId, body);
   await exports.validateDfsp(ctx, dfspId);
 
   const rootCertificate = body.rootCertificate || '';

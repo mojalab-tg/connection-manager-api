@@ -141,11 +141,11 @@ module.exports = {
       .default('1000')
       .asInt(),
   },
-  switchFQDN: env.get('SWITCH_FQDN').default('switch.example.com').asString(),
+  switchFQDN: env.get('SWITCH_FQDN').default('hub.example.com').asString(),
   switchId: env.get('SWITCH_ID').required().default('example.com').asString(),
 
   vault: {
-    endpoint: env.get('VAULT_ENDPOINT').default('http://vault-dev:8233').asString(),
+    endpoint: env.get('VAULT_ENDPOINT').default('http://192.168.5.97:8233').asString(),
     mounts: {
       pki: env.get('VAULT_MOUNT_PKI').default('pki').asString(),
       intermediatePki: env.get('VAULT_MOUNT_INTERMEDIATE_PKI').default('pki_int').asString(),

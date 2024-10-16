@@ -31,6 +31,7 @@ exports.getDfspStatus = (req, res, next, dfspId) => {
 };
 
 exports.createDFSPEgress = (req, res, next, body, dfspId) => {
+  console.log('createDFSPEgress body', body);
   DfspNetworkConfig.createDFSPEgress(req.context, dfspId, body)
     .then(response => {
       utils.writeJson(res, response);

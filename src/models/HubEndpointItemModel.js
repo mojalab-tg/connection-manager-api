@@ -22,7 +22,7 @@ const InternalError = require('../errors/InternalError');
 const ENDPOINT_ITEMS_TABLE = 'hub_endpoint_items';
 
 exports.findById = async (id) => {
-  console.log('findById id', id);
+  console.log('findById id', id); // costom
   const rows = await knex.table(ENDPOINT_ITEMS_TABLE).where('id', id).select();
   if (rows.length === 0) {
     throw new NotFoundError('Item with id: ' + id);
