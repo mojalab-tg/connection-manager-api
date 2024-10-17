@@ -31,6 +31,7 @@ const formatBody = (body, pkiEngine) => {
 };
 
 exports.createInternalHubCA = async (ctx, body, ttl) => {
+  console.log('createInternalHubCA');
   const { pkiEngine, certManager } = ctx;
 
   const { cert } = await pkiEngine.createCA(body, ttl);
@@ -52,6 +53,7 @@ exports.createInternalHubCA = async (ctx, body, ttl) => {
 };
 
 exports.createExternalHubCA = async (ctx, body) => {
+  console.log('createExternalHubCA');
   const { pkiEngine, certManager } = ctx;
 
   const rootCertificate = body.rootCertificate || '';
@@ -81,6 +83,7 @@ exports.createExternalHubCA = async (ctx, body) => {
 };
 
 exports.getHubCA = async (ctx) => {
+  console.log('getHubCA');
   const { pkiEngine } = ctx;
   const ca = await pkiEngine.getRootCaCert();
   return {
@@ -91,11 +94,13 @@ exports.getHubCA = async (ctx) => {
 };
 
 exports.getHubCAInfo = async (ctx) => {
+  console.log('getHubCAInfo');
   const { pkiEngine } = ctx;
   return pkiEngine.getHubCACertDetails();
 };
 
 exports.deleteHubCA = async (ctx) => {
+  console.log('deleteHubCA');
   const { pkiEngine } = ctx;
   await pkiEngine.deleteHubCACertDetails();
   await pkiEngine.deleteCA();

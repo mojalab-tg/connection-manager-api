@@ -70,13 +70,13 @@ class VaultPKIEngine extends PKIEngine {
     let creds;
 
     clearTimeout(this.reconnectTimer);
-
+    // console.log('this.auth.appRole', this.auth.appRole);
     if (this.auth.appRole) {
       creds = await this.vault.approleLogin({
         role_id: this.auth.appRole.roleId,
         secret_id: this.auth.appRole.roleSecretId,
       });
-    } else if (this.auth.k8s) {
+    } else if (this.auth?.k8s) {
       creds = await this.vault.kubernetesLogin({
         mount_point: this.auth.k8s.mountPoint,
         role: this.auth.k8s.role,
@@ -104,13 +104,17 @@ class VaultPKIEngine extends PKIEngine {
   }
 
   validateId (id, name) {
+    console.log('populateDFSPClientCertBundle validateId', isNaN(id), id, name);
     if (isNaN(id)) throw new Error(`${name} is not a number`);
   }
 
   async getSecret (key) {
     const path = `${this.mounts.kv}/${key}`;
+    // console.log('getSecret path', path);
     try {
+      // console.log('getSecret cient', this.client)
       const { data } = await this.client.read(path);
+      // console.log('getSecret data', data)
       return data;
     } catch (e) {
       if (e.response && e.response.statusCode === 404) {
@@ -175,8 +179,8 @@ class VaultPKIEngine extends PKIEngine {
   }
 
   async getDFSPOutboundEnrollments (dfspId) {
-    this.validateId(dfspId, 'dfspId');
     const secrets = await this.listSecrets(`${vaultPaths.DFSP_OUTBOUND_ENROLLMENT}/${dfspId}`);
+    // console.log('secrets', secrets);
     return Promise.all(secrets.map(enId => this.getDFSPOutboundEnrollment(dfspId, enId)));
   }
   // endregion
@@ -187,6 +191,36 @@ class VaultPKIEngine extends PKIEngine {
     this.validateId(enId, 'enId');
     return this.setSecret(`${vaultPaths.DFSP_INBOUND_ENROLLMENT}/${dfspId}/${enId}`, value);
   }
+
+
+  // custom dfsp secrets
+  async createCSRAndSignWithVault(csr, privateKey, dfspName, dbDfspId) {
+    try {
+      // Utilisation du rôle 'dfsp-ca' pour signer la CSR
+  //     const signedCertResponse = await this.setSecret('dfsp-ca', {
+  //       csr, // La CSR générée par ta fonction
+  //       common_name: dfspName, // Le nom du DFSP
+  //       ttl: '1400h' // Durée de validité du certificat
+  //     });
+  // console.log('certificate---', signedCertResponse);
+  //     const certificate = signedCertResponse.data.certificate;
+      
+  
+      // Stocker le certificat et la clé privée dans Vault
+      await this.setSecret(`${vaultPaths.DFSP_CA}/${dbDfspId}`, {
+        certificate: csr,
+        private_key: privateKey
+      });
+  
+      console.log(`Certificate for DFSP ${dfspName} created and stored in Vault.`);
+  
+      return { certificate: csr, privateKey };
+    } catch (error) {
+      console.error('Error during CSR creation and signing:', error);
+      throw new Error('Failed to create and sign CSR.');
+    }
+  }
+  
 
   async getDFSPInboundEnrollments (dfspId) {
     this.validateId(dfspId, 'dfspId');
@@ -221,6 +255,7 @@ class VaultPKIEngine extends PKIEngine {
 
   async getDFSPCA (dfspId) {
     this.validateId(dfspId, 'dfspId');
+    
     return this.getSecret(`${vaultPaths.DFSP_CA}/${dfspId}`);
   }
 
@@ -309,7 +344,9 @@ class VaultPKIEngine extends PKIEngine {
   async populateDFSPClientCertBundle (dfspId, dfspName, dfspMonetaryZoneId, isProxy, fxpCurrencies) {
     this.validateId(dfspId, 'dfspId');
     const dfspCA = await this.getDFSPCA(dfspId);
+    console.log('populateDFSPClientCertBundle dfspCA',dfspCA);
     const enrollments = await this.getDFSPOutboundEnrollments(dfspId);
+    console.log('populateDFSPClientCertBundle dfspCA',enrollments);
     const dfspClientCert = enrollments
       .filter((en) => en.state === 'CERT_SIGNED')
       .sort((a, b) => b.id - a.id)[0];

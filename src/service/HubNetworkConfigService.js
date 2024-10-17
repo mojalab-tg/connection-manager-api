@@ -70,10 +70,17 @@ exports.createHubEgressIp = async (ctx, body) => {
  * body InputIP Hub ingress IP
  * returns EndPointIp
  **/
-exports.createHubIngressIp = async (ctx, body) => {
+
+// befor custom
+exports.createHubIngressIp1 = async (ctx, body) => {
   const endpointItem = await createHubIp(body, 'INGRESS');
   const id = await HubEndpointItemModel.create(endpointItem);
   return HubEndpointItemModel.findObjectById(id);
+};
+exports.createHubIngressIp = async (ctx, body) => {
+  const endpointItem = await createHubIp(body, 'INGRESS');
+  const id = await HubEndpointItemModel.create(endpointItem);
+  return HubEndpointItemModel.findObjectById(id[0]);
 };
 
 /**
@@ -119,7 +126,28 @@ exports.getHubEndpoints = async ctx => HubEndpointItemModel.findObjectAll();
 /**
  *
  */
-exports.updateHubEndpoint = async (ctx, epId, body) => {
+
+// before custom
+exports.updateHubEndpoint1 = async (ctx, epId, body) => {
+  await HubEndpointItemModel.findObjectById(epId);
+  if (body.value && body.value.address) {
+    validateIPAddressInput(body.value.address);
+  }
+  if (body.value && body.value.ports) {
+    validatePorts(body.value.ports);
+  }
+  if (body.value && body.value.url) {
+    validateURLInput(body.value.url);
+  }
+
+  const endpointItem = { ...body };
+  if (endpointItem.value) {
+    endpointItem.value = JSON.stringify(endpointItem.value);
+  }
+  const updatedEndpoint = await HubEndpointItemModel.update(epId, endpointItem);
+  return updatedEndpoint;
+};
+exports.updateHubEndpoint = async (epId, body) => {
   await HubEndpointItemModel.findObjectById(epId);
   if (body.value && body.value.address) {
     validateIPAddressInput(body.value.address);
@@ -139,7 +167,12 @@ exports.updateHubEndpoint = async (ctx, epId, body) => {
   return updatedEndpoint;
 };
 
-exports.deleteHubEndpoint = async (ctx, epId) => {
+// before custom
+exports.deleteHubEndpoint1 = async (ctx, epId) => {
+  await HubEndpointItemModel.findObjectById(epId);
+  await HubEndpointItemModel.delete(epId);
+};
+exports.deleteHubEndpoint = async (epId) => {
   await HubEndpointItemModel.findObjectById(epId);
   await HubEndpointItemModel.delete(epId);
 };

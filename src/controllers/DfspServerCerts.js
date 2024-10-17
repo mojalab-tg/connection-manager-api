@@ -21,6 +21,7 @@ const utils = require('../utils/writer.js');
 const ServerCertsService = require('../service/ServerCertsService');
 
 exports.createDfspServerCerts = (req, res, next, body, dfspId) => {
+  console.log('createDfspServerCerts');
   ServerCertsService.createDfspServerCerts(req.context, dfspId, body)
     .then(response => {
       utils.writeJson(res, response);

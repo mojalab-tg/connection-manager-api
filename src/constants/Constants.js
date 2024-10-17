@@ -38,7 +38,7 @@ if (process.env.TEST) {
         VAULT_PKI_SERVER_ROLE: 'example.com'
     };
 }
-
+// console.log(`process.env`, process.env)
 const env = from(process.env, {
     asFileContent: (path) => getFileContent(path),
     asFileListContent: (pathList) => pathList.split(',').map((path) => getFileContent(path)),
@@ -46,7 +46,8 @@ const env = from(process.env, {
     asTextFileContent: (path) => getFileContent(path).toString().trim(),
 });
 
-const vaultAuthMethod = env.get('VAULT_AUTH_METHOD').required().asEnum(['K8S', 'APP_ROLE']);
+const vaultAuthMethod = env.get('VAULT_AUTH_METHOD').required().default(`APP_ROLE`).asEnum(['K8S', 'APP_ROLE']);
+
 let vaultAuth;
 if (vaultAuthMethod === 'K8S') {
     vaultAuth = {
@@ -61,8 +62,8 @@ if (vaultAuthMethod === 'K8S') {
         appRole: {
             // Generated per: https://www.vaultproject.io/docs/auth/approle#via-the-cli-1
             // Or: https://github.com/kr1sp1n/node-vault/blob/70097269d35a58bb560b5290190093def96c87b1/example/auth_approle.js
-            roleId: env.get('VAULT_ROLE_ID_FILE').default('/vault/role-id').asTextFileContent(),
-            roleSecretId: env.get('VAULT_ROLE_SECRET_ID_FILE').default('/vault/role-secret-id').asTextFileContent(),
+            roleId: env.get('VAULT_ROLE_ID_FILE').default('../docker/vault/role-id').asTextFileContent(),
+            roleSecretId: env.get('VAULT_ROLE_SECRET_ID_FILE').default('../docker/vault/secret-id').asTextFileContent(),
         },
     };
 }
@@ -141,8 +142,26 @@ module.exports = {
             .asInt(),
     },
     switchFQDN: env.get('SWITCH_FQDN').default('switch.example.com').asString(),
-    switchId: env.get('SWITCH_ID').required().asString(),
+    switchId: env.get('SWITCH_ID').required().default('example.com').asString(),
 
+    vault: {
+        endpoint: env.get('VAULT_ENDPOINT').default('http://vault-dev:8233').asString(),
+        mounts: {
+            pki: env.get('VAULT_MOUNT_PKI').default('pki').asString(),
+            intermediatePki: env.get('VAULT_MOUNT_INTERMEDIATE_PKI').default('pki_int').asString(),
+            kv: env.get('VAULT_MOUNT_KV').default('secrets').asString(),
+            dfspClientCertBundle: env.get('VAULT_MOUNT_DFSP_CLIENT_CERT_BUNDLE').default('onboarding_pm4mls').asString(),
+            dfspInternalIPWhitelistBundle: env.get('VAULT_MOUNT_DFSP_INT_IP_WHITELIST_BUNDLE').default('whitelist_pm4mls').asString(),
+            dfspExternalIPWhitelistBundle: env.get('VAULT_MOUNT_DFSP_EXT_IP_WHITELIST_BUNDLE').default('whitelist_fsps').asString(),
+        },
+        pkiServerRole: env.get('VAULT_PKI_SERVER_ROLE').required().asString(),
+        pkiClientRole: env.get('VAULT_PKI_CLIENT_ROLE').required().asString(),
+        auth: vaultAuth,
+        signExpiryHours: env.get('VAULT_SIGN_EXPIRY_HOURS').default('43800').asString(),
+        keyLength: env.get('PRIVATE_KEY_LENGTH').default(4096).asIntPositive(),
+        keyAlgorithm: env.get('PRIVATE_KEY_ALGORITHM').default('rsa').asString(),
+    },
+    certManager,
     vault: {
         endpoint: env.get('VAULT_ENDPOINT').default('http://vault-dev:8233').asString(),
         mounts: {

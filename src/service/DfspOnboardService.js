@@ -29,9 +29,11 @@ exports.onboardDFSP = async (ctx, dfspId) => {
   await PkiService.validateDfsp(ctx, dfspId);
   const { pkiEngine } = ctx;
   const { id, monetaryZoneId, isProxy } = await DFSPModel.findByDfspId(dfspId);
+  // console.log('onboardDFSP v1 findByDfspId', id);
   const fxpCurrencies = await DFSPModel.getFxpSupportedCurrencies(dfspId);
+  // console.log('onboardDFSP v1 fxpCurrencies', fxpCurrencies);
   await pkiEngine.populateDFSPClientCertBundle(id, dfspId, monetaryZoneId, !!isProxy, fxpCurrencies);
-
+  // console.log('onboardDFSP v1 populateDFSPClientCertBundle');
   const ipsBundle = await getIPsBundle();
   await pkiEngine.populateDFSPInternalIPWhitelistBundle(ipsBundle);
 

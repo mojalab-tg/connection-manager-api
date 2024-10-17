@@ -49,7 +49,37 @@ exports.createDFSP = async(ctx, body) => {
         await DFSPModel.createFxpSupportedCurrencies(body.dfspId, body.fxpCurrencies);
         return { id: body.dfspId };
     } catch (err) {
-        console.error(err);
+        console.error(err.message);
+        throw new InternalError(err.message);
+    }
+};
+
+// custom 
+
+exports.createDFSP1 = async(ctx, body) => {
+    const regex = / /gi;
+    const dfspIdNoSpaces = body.dfspId ? body.dfspId.replace(regex, '-') : null;
+
+    const values = {
+        dfsp_id: body.dfspId,
+        name: body.name,
+        monetaryZoneId: body.monetaryZoneId ? body.monetaryZoneId : undefined,
+        isProxy: body.isProxy,
+        security_group: body.securityGroup || 'Application/DFSP:' + dfspIdNoSpaces
+    };
+
+    try {
+        // Vérifiez si le DFSP existe déjà
+        const existingDFSP = await DFSPModel.findByRawId(body.dfspId);
+        if (existingDFSP) {
+            throw new Error(`DFSP with id ${body.dfspId} already exists.`);
+        }
+
+        await DFSPModel.create(values);
+        await DFSPModel.createFxpSupportedCurrencies(body.dfspId, body.fxpCurrencies);
+        return { id: body.dfspId };
+    } catch (err) {
+        console.error(err.message);
         throw new InternalError(err.message);
     }
 };
@@ -65,6 +95,7 @@ exports.createDFSPWithCSR = async(ctx, body) => {
         throw new InternalError(err.message);
     }
 };
+
 
 /**
  * Returns all the dfsps in the environment
