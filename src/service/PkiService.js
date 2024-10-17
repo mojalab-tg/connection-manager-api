@@ -32,38 +32,38 @@ const { createCSRAndDFSPOutboundEnrollment } = require('./DfspOutboundService');
  * body DFSPCreate DFSP initial info
  * returns ObjectCreatedResponse
  **/
-exports.createDFSP = async (ctx, body) => {
-  const regex = / /gi;
-  const dfspIdNoSpaces = body.dfspId ? body.dfspId.replace(regex, '-') : null;
+exports.createDFSP = async(ctx, body) => {
+    const regex = / /gi;
+    const dfspIdNoSpaces = body.dfspId ? body.dfspId.replace(regex, '-') : null;
 
-  const values = {
-    dfsp_id: body.dfspId,
-    name: body.name,
-    monetaryZoneId: body.monetaryZoneId ? body.monetaryZoneId : undefined,
-    isProxy: body.isProxy,
-    security_group: body.securityGroup || 'Application/DFSP:' + dfspIdNoSpaces
-  };
+    const values = {
+        dfsp_id: body.dfspId,
+        name: body.name,
+        monetaryZoneId: body.monetaryZoneId ? body.monetaryZoneId : undefined,
+        isProxy: body.isProxy,
+        security_group: body.securityGroup || 'Application/DFSP:' + dfspIdNoSpaces
+    };
 
-  try {
-    await DFSPModel.create(values);
-    await DFSPModel.createFxpSupportedCurrencies(body.dfspId, body.fxpCurrencies);
-    return { id: body.dfspId };
-  } catch (err) {
-    console.error(err);
-    throw new InternalError(err.message);
-  }
+    try {
+        await DFSPModel.create(values);
+        await DFSPModel.createFxpSupportedCurrencies(body.dfspId, body.fxpCurrencies);
+        return { id: body.dfspId };
+    } catch (err) {
+        console.error(err);
+        throw new InternalError(err.message);
+    }
 };
 
-exports.createDFSPWithCSR = async (ctx, body) => {
-  const dfsp = await exports.createDFSP(ctx, body);
+exports.createDFSPWithCSR = async(ctx, body) => {
+    const dfsp = await exports.createDFSP(ctx, body);
 
-  try {
-    await createCSRAndDFSPOutboundEnrollment(ctx, body.dfspId, Constants.clientCsrParameters);
-    return dfsp;
-  } catch (err) {
-    console.error(err);
-    throw new InternalError(err.message);
-  }
+    try {
+        await createCSRAndDFSPOutboundEnrollment(ctx, body.dfspId, Constants.clientCsrParameters);
+        return dfsp;
+    } catch (err) {
+        console.error(err);
+        throw new InternalError(err.message);
+    }
 };
 
 /**
@@ -72,14 +72,14 @@ exports.createDFSPWithCSR = async (ctx, body) => {
  * returns DFSP[]
  **/
 exports.getDFSPs = async ctx => {
-  const rows = await DFSPModel.findAll();
-  return rows.map(r => dfspRowToObject(r));
+    const rows = await DFSPModel.findAll();
+    return rows.map(r => dfspRowToObject(r));
 };
 
 /**
  * Validates that both env and dfsp exist, and that the dfsp belongs to the env
  */
-exports.validateDfsp = async (ctx, dfspId) => exports.getDFSPById(ctx, dfspId);
+exports.validateDfsp = async(ctx, dfspId) => exports.getDFSPById(ctx, dfspId);
 
 /**
  * Returns a DFSP by its id
@@ -87,41 +87,41 @@ exports.validateDfsp = async (ctx, dfspId) => exports.getDFSPById(ctx, dfspId);
  * dfspId String ID of dfsp
  * returns DFSP
  **/
-exports.getDFSPById = async (ctx, dfspId) => {
-  if (dfspId === null || typeof dfspId === 'undefined') {
-    throw new ValidationError(`Invalid dfspId ${dfspId}`);
-  }
-  try {
-    const result = await DFSPModel.findByDfspId(dfspId);
-    return dfspRowToObject(result);
-  } catch (error) {
-    if (error instanceof NotFoundError) {
-      throw new NotFoundError(`DFSP with id ${dfspId} not found`);
+exports.getDFSPById = async(ctx, dfspId) => {
+    if (dfspId === null || typeof dfspId === 'undefined') {
+        throw new ValidationError(`Invalid dfspId ${dfspId}`);
     }
-    throw error;
-  }
+    try {
+        const result = await DFSPModel.findByDfspId(dfspId);
+        return dfspRowToObject(result);
+    } catch (error) {
+        if (error instanceof NotFoundError) {
+            throw new NotFoundError(`DFSP with id ${dfspId} not found`);
+        }
+        throw error;
+    }
 };
 
-exports.updateDFSP = async (ctx, dfspId, newDfsp) => {
-  if (dfspId === null || typeof dfspId === 'undefined') {
-    throw new ValidationError(`Invalid dfspId ${dfspId}`);
-  }
+exports.updateDFSP = async(ctx, dfspId, newDfsp) => {
+    if (dfspId === null || typeof dfspId === 'undefined') {
+        throw new ValidationError(`Invalid dfspId ${dfspId}`);
+    }
 
-  const values = {
-    name: newDfsp.name,
-    monetaryZoneId: newDfsp.monetaryZoneId,
-    isProxy: newDfsp.isProxy,
-    security_group: newDfsp.securityGroup
-  };
+    const values = {
+        name: newDfsp.name,
+        monetaryZoneId: newDfsp.monetaryZoneId,
+        isProxy: newDfsp.isProxy,
+        security_group: newDfsp.securityGroup
+    };
 
-  return DFSPModel.update(dfspId, values);
+    return DFSPModel.update(dfspId, values);
 };
 
 /**
  *
  */
 exports.splitChainIntermediateCertificateInfo = (intermediateChain, pkiEngine) => {
-  return pkiEngine.splitCertificateChain(intermediateChain || '').map(cert => pkiEngine.getCertInfo(cert));
+    return pkiEngine.splitCertificateChain(intermediateChain || '').map(cert => pkiEngine.getCertInfo(cert));
 };
 
 /**
@@ -130,12 +130,12 @@ exports.splitChainIntermediateCertificateInfo = (intermediateChain, pkiEngine) =
  * dfspId String ID of dfsp
  * returns DFSP
  **/
-exports.deleteDFSP = async (ctx, dfspId) => {
-  await exports.validateDfsp(ctx, dfspId);
-  const { pkiEngine } = ctx;
-  const dbDfspId = await DFSPModel.findIdByDfspId(dfspId);
-  await pkiEngine.deleteAllDFSPData(dbDfspId);
-  return DFSPModel.delete(dfspId);
+exports.deleteDFSP = async(ctx, dfspId) => {
+    await exports.validateDfsp(ctx, dfspId);
+    const { pkiEngine } = ctx;
+    const dbDfspId = await DFSPModel.findIdByDfspId(dfspId);
+    await pkiEngine.deleteAllDFSPData(dbDfspId);
+    return DFSPModel.delete(dfspId);
 };
 
 /**
@@ -144,57 +144,58 @@ exports.deleteDFSP = async (ctx, dfspId) => {
  * rootCertificate: a root certificate used by the DFSP. Can be a self-signed certificate, or a globally trusted CA like Digicert.
  * intermediateChain: list of intermediate certificates.
  */
-exports.setDFSPca = async (ctx, dfspId, body) => {
-  await exports.validateDfsp(ctx, dfspId);
+exports.setDFSPca = async(ctx, dfspId, body) => {
+    console.log("body", body);
+    await exports.validateDfsp(ctx, dfspId);
 
-  const rootCertificate = body.rootCertificate || '';
-  const intermediateChain = body.intermediateChain || '';
+    const rootCertificate = body.rootCertificate || '';
+    const intermediateChain = body.intermediateChain || '';
 
-  const { pkiEngine } = ctx;
-  const { validations, validationState } = await pkiEngine.validateCACertificate(rootCertificate, intermediateChain);
+    const { pkiEngine } = ctx;
+    const { validations, validationState } = await pkiEngine.validateCACertificate(rootCertificate, intermediateChain);
 
-  const values = {
-    rootCertificate,
-    intermediateChain,
-    validations,
-    validationState,
-  };
+    const values = {
+        rootCertificate,
+        intermediateChain,
+        validations,
+        validationState,
+    };
 
-  const dbDfspId = await DFSPModel.findIdByDfspId(dfspId);
-  await pkiEngine.setDFSPCA(dbDfspId, values);
-
-  return values;
-};
-
-exports.getDfspsByMonetaryZones = async (ctx, monetaryZoneId) => {
-  const dfsps = await DFSPModel.getDfspsByMonetaryZones(monetaryZoneId);
-  return dfsps.map(r => dfspRowToObject(r));
-};
-
-exports.getDFSPca = async (ctx, dfspId) => {
-  await exports.validateDfsp(ctx, dfspId);
-  const { pkiEngine } = ctx;
-  try {
     const dbDfspId = await DFSPModel.findIdByDfspId(dfspId);
-    return await pkiEngine.getDFSPCA(dbDfspId);
-  } catch (error) {
-    if (error instanceof NotFoundError) {
-      return {
-        rootCertificate: null,
-        intermediateChain: null,
-        validations: [],
-        validationState: ValidationCodes.VALID_STATES.NOT_AVAILABLE
-      };
-    }
-    throw error;
-  }
+    await pkiEngine.setDFSPCA(dbDfspId, values);
+
+    return values;
 };
 
-exports.deleteDFSPca = async (ctx, dfspId) => {
-  await exports.validateDfsp(ctx, dfspId);
-  const { pkiEngine } = ctx;
-  const dbDfspId = await DFSPModel.findIdByDfspId(dfspId);
-  return pkiEngine.deleteDFSPCA(dbDfspId);
+exports.getDfspsByMonetaryZones = async(ctx, monetaryZoneId) => {
+    const dfsps = await DFSPModel.getDfspsByMonetaryZones(monetaryZoneId);
+    return dfsps.map(r => dfspRowToObject(r));
+};
+
+exports.getDFSPca = async(ctx, dfspId) => {
+    await exports.validateDfsp(ctx, dfspId);
+    const { pkiEngine } = ctx;
+    try {
+        const dbDfspId = await DFSPModel.findIdByDfspId(dfspId);
+        return await pkiEngine.getDFSPCA(dbDfspId);
+    } catch (error) {
+        if (error instanceof NotFoundError) {
+            return {
+                rootCertificate: null,
+                intermediateChain: null,
+                validations: [],
+                validationState: ValidationCodes.VALID_STATES.NOT_AVAILABLE
+            };
+        }
+        throw error;
+    }
+};
+
+exports.deleteDFSPca = async(ctx, dfspId) => {
+    await exports.validateDfsp(ctx, dfspId);
+    const { pkiEngine } = ctx;
+    const dbDfspId = await DFSPModel.findIdByDfspId(dfspId);
+    return pkiEngine.deleteDFSPCA(dbDfspId);
 };
 
 /**
@@ -204,11 +205,11 @@ exports.deleteDFSPca = async (ctx, dfspId) => {
  * @param {RowObject} row RowObject as returned by the DFSPModel or knex
  */
 const dfspRowToObject = (row) => {
-  return {
-    id: row.dfsp_id,
-    name: row.name,
-    monetaryZoneId: row.monetaryZoneId ? row.monetaryZoneId : undefined,
-    isProxy: row.isProxy,
-    securityGroup: row.security_group,
-  };
+    return {
+        id: row.dfsp_id,
+        name: row.name,
+        monetaryZoneId: row.monetaryZoneId ? row.monetaryZoneId : undefined,
+        isProxy: row.isProxy,
+        securityGroup: row.security_group,
+    };
 };

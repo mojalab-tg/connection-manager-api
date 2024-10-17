@@ -21,71 +21,72 @@ const utils = require('../utils/writer.js');
 const Pki = require('../service/PkiService');
 
 exports.createDFSP = (req, res, next, body) => {
-  Pki.createDFSPWithCSR(req.context, body)
-    .then(response => {
-      utils.writeJson(res, response);
-    })
-    .catch(response => {
-      utils.writeJson(res, response, response.status);
-    });
+    Pki.createDFSPWithCSR(req.context, body)
+        .then(response => {
+            utils.writeJson(res, response);
+        })
+        .catch(response => {
+            utils.writeJson(res, response, response.status);
+        });
 };
 
 exports.deleteDFSP = (req, res, next, dfspId) => {
-  Pki.deleteDFSP(req.context, dfspId)
-    .then(response => {
-      utils.writeJson(res, response);
-    })
-    .catch(response => {
-      utils.writeJson(res, response, response.status);
-    });
+    Pki.deleteDFSP(req.context, dfspId)
+        .then(response => {
+            utils.writeJson(res, response);
+        })
+        .catch(response => {
+            utils.writeJson(res, response, response.status);
+        });
 };
 
 exports.getDFSPs = (req, res, next) => {
-  Pki.getDFSPs(req.context)
-    .then(response => {
-      utils.writeJson(res, response);
-    })
-    .catch(response => {
-      utils.writeJson(res, response, response.status);
-    });
+    Pki.getDFSPs(req.context)
+        .then(response => {
+            utils.writeJson(res, response);
+        })
+        .catch(response => {
+            utils.writeJson(res, response, response.status);
+        });
 };
 
 exports.setDFSPca = (req, res, next, body, dfspId) => {
-  Pki.setDFSPca(req.context, dfspId, body)
-    .then(response => {
-      utils.writeJson(res, response);
-    })
-    .catch(response => {
-      utils.writeJson(res, response, response.status);
-    });
+    console.log("body", body);
+    Pki.setDFSPca(req.context, dfspId, body)
+        .then(response => {
+            utils.writeJson(res, response);
+        })
+        .catch(response => {
+            utils.writeJson(res, response, response.status);
+        });
 };
 
 exports.getDFSPca = (req, res, next, dfspId) => {
-  Pki.getDFSPca(req.context, dfspId)
-    .then(response => {
-      utils.writeJson(res, response);
-    })
-    .catch(response => {
-      utils.writeJson(res, response, response.status);
-    });
+    Pki.getDFSPca(req.context, dfspId)
+        .then(response => {
+            utils.writeJson(res, response);
+        })
+        .catch(response => {
+            utils.writeJson(res, response, response.status);
+        });
 };
 
 exports.updateDFSP = (req, res, next, body, dfspId) => {
-  Pki.updateDFSP(req.context, dfspId, body)
-    .then(response => {
-      utils.writeJson(res, response);
-    })
-    .catch(response => {
-      utils.writeJson(res, response, response.status);
-    });
+    Pki.updateDFSP(req.context, dfspId, body)
+        .then(response => {
+            utils.writeJson(res, response);
+        })
+        .catch(response => {
+            utils.writeJson(res, response, response.status);
+        });
 };
 
 exports.getDfspsByMonetaryZones = (req, res, next, monetaryZoneId) => {
-  Pki.getDfspsByMonetaryZones(req.context, monetaryZoneId)
-    .then(response => {
-      utils.writeJson(res, response);
-    })
-    .catch(response => {
-      utils.writeJson(res, response, response.status);
-    });
+    Pki.getDfspsByMonetaryZones(req.context, monetaryZoneId)
+        .then(response => {
+            utils.writeJson(res, response);
+        })
+        .catch(response => {
+            utils.writeJson(res, response, response.status);
+        });
 };
