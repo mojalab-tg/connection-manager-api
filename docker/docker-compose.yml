@@ -31,8 +31,8 @@ services:
       - VAULT_ROLE_ID_FILE=./docker/vault/tmp/role-id
       - VAULT_ROLE_SECRET_ID_FILE=./docker/vault/tmp/secret-id
       - SWITCH_ID=modus123
-      - VAULT_PKI_CLIENT_ROLE=http://vault-dev:8233
-      - VAULT_PKI_SERVER_ROLE=http://vault-dev:8233
+      - VAULT_PKI_CLIENT_ROLE=example.com
+      - VAULT_PKI_SERVER_ROLE=example.com
       - VAULT_ADDR=http://vault-dev:8233
     tty: true
     stdin_open: true  
