@@ -69,8 +69,32 @@ exports.getAllDfspServerCerts = async (ctx) => {
 /**
  * Creates the server certificates
  */
+exports.createHubServerCerts = async (ctx) => {
+  const { pkiEngine } = ctx;
+  const cert = {};
+  const serverCertData = await pkiEngine.createHubServerCert(Constants.serverCsrParameters);
+  cert.rootCertificate = await pkiEngine.getRootCaCert();
+  cert.rootCertificateInfo = pkiEngine.getCertInfo(cert.rootCertificate);
+  if (serverCertData.ca_chain) {
+    cert.intermediateChain = serverCertData.ca_chain;
+    cert.intermediateChainInfo = cert.intermediateChain.map(pkiEngine.getCertInfo);
+  }
+  cert.serverCertificate = serverCertData.certificate;
+  cert.serverCertificateInfo = pkiEngine.getCertInfo(cert.serverCertificate);
+  cert.serverCertificateInfo.serialNumber = serverCertData.serial_number;
+
+  const { validations, validationState } = await pkiEngine.validateServerCertificate(cert.serverCertificate, cert.intermediateChain, cert.rootCertificate);
+  const certData = {
+    ...cert,
+    validations,
+    validationState,
+  };
+
+  await pkiEngine.setHubServerCert(certData);
+  return certData;
+};
 // custom
-exports.createHubServerCerts = async (ctx, body) => { // custom
+exports.createHubServerCertsCustom = async (ctx, body) => { // custom
   const { pkiEngine } = ctx;
   const cert = {};
   // const serverCertData = await pkiEngine.createHubServerCert(Constants.serverCsrParameters);
