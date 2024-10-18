@@ -431,12 +431,16 @@ class VaultPKIEngine extends PKIEngine {
         reqJson.ip_sans = ips.join(',');
       }
     }
-    const { data } = await this.client.request({
-      path: `/${this.mounts.pki}/issue/${this.pkiServerRole}`,
-      method: 'POST',
-      json: reqJson,
-    });
-    return data;
+    try {
+      const { data } = await this.client.request({
+        path: `/${this.mounts.pki}/issue/${this.pkiServerRole}`,
+        method: 'POST',
+        json: reqJson,
+      });
+      return data;
+    } catch (error) {
+      console.error('Error creating hub server certificate:', error); 
+    }
   }
 
   async revokeHubServerCert (serial) {

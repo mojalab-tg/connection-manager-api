@@ -53,7 +53,6 @@ exports.createInternalHubCA = async (ctx, body, ttl) => {
 };
 
 exports.createExternalHubCA = async (ctx, body) => {
-  console.log('createExternalHubCA');
   const { pkiEngine, certManager } = ctx;
 
   const rootCertificate = body.rootCertificate || '';
@@ -70,12 +69,13 @@ exports.createExternalHubCA = async (ctx, body) => {
     validations,
     validationState,
   };
-
+  console.log('ext certManager', validationState,);
   if (validationState === ValidationCodes.VALID_STATES.VALID) {
     await pkiEngine.setHubCaCertChain(rootCertificate + intermediateChain, privateKey);
+    console.log('ext setHubCACertDetails', info);
     await pkiEngine.setHubCACertDetails(info);
   }
-
+  console.log('ext certManager', certManager);
   if (certManager) {
     await certManager.renewServerCert();
   }

@@ -145,7 +145,7 @@ module.exports = {
   switchId: env.get('SWITCH_ID').required().default('example.com').asString(),
 
   vault: {
-    endpoint: env.get('VAULT_ENDPOINT').default('http://192.168.5.97:8233').asString(),
+    endpoint: env.get('VAULT_ENDPOINT').default('http://vault-dev:8233').asString(),
     mounts: {
       pki: env.get('VAULT_MOUNT_PKI').default('pki').asString(),
       intermediatePki: env.get('VAULT_MOUNT_INTERMEDIATE_PKI').default('pki_int').asString(),
