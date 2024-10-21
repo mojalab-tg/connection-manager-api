@@ -117,7 +117,6 @@ class PKIEngine {
    */
   validateServerCertificate (serverCert, intermediateChain, rootCertificate) {
     const validationCodes = this.validationConfig.serverCertValidations;
-    console.table('validationCodes', validationCodes)
     return this.performCertificateValidations(validationCodes, serverCert, intermediateChain, rootCertificate);
   }
 
@@ -144,9 +143,11 @@ class PKIEngine {
           validations.push(this.validateCertificateChain(serverCert, intermediateChain, rootCertificate));
           break;
         case ValidationCodes.VALIDATION_CODES.CERTIFICATE_PUBLIC_KEY_LENGTH_2048.code:
+          console.log('ValidationCodes.VALIDATION_CODES.CERTIFICATE_PUBLIC_KEY_LENGTH_2048', ValidationCodes.VALIDATION_CODES.CERTIFICATE_PUBLIC_KEY_LENGTH_2048)
           validations.push(this.validateCertificateKeyLength(serverCert, 2048, ValidationCodes.VALIDATION_CODES.CERTIFICATE_PUBLIC_KEY_LENGTH_2048.code));
           break;
         case ValidationCodes.VALIDATION_CODES.CERTIFICATE_PUBLIC_KEY_LENGTH_4096.code:
+          // console.log('ValidationCodes.VALIDATION_CODES.CERTIFICATE_PUBLIC_KEY_LENGTH_4096', ValidationCodes.VALIDATION_CODES.CERTIFICATE_PUBLIC_KEY_LENGTH_4096)
           validations.push(this.validateCertificateKeyLength(serverCert, 4096, ValidationCodes.VALIDATION_CODES.CERTIFICATE_PUBLIC_KEY_LENGTH_4096.code));
           break;
         case ValidationCodes.VALIDATION_CODES.VERIFY_ROOT_CERTIFICATE.code:

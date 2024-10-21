@@ -1068,6 +1068,7 @@ class VaultPKIEngine extends PKIEngine {
    */
   verifyCertKeyLength (cert, minLength) {
     const certInfo = this.getCertInfo(cert);
+    console.log('verifyCertKeyLength', certInfo.publicKeyLength, minLength)
     if (certInfo.publicKeyLength < minLength) {
       return { valid: false, reason: { actualKeySize: certInfo.publicKeyLength, minKeySize: minLength } };
     }
