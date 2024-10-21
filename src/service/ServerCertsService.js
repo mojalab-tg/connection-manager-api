@@ -69,21 +69,26 @@ exports.getAllDfspServerCerts = async (ctx) => {
 /**
  * Creates the server certificates
  */
-exports.createHubServerCerts = async (ctx) => {
+exports.createHubServerCerts= async (ctx, body) => {
   const { pkiEngine } = ctx;
   const cert = {};
-  const serverCertData = await pkiEngine.createHubServerCert(Constants.serverCsrParameters);
+  cert.serverCertificate = pkiEngine.getCertInfo(body.rootCertificate); // custom
+  const serverCertData = await pkiEngine.createHubServerCert(cert.serverCertificate);
+  
   cert.rootCertificate = await pkiEngine.getRootCaCert();
   cert.rootCertificateInfo = pkiEngine.getCertInfo(cert.rootCertificate);
+  console.log('csrParameters serverCertData', serverCertData.ca_chain)
   if (serverCertData.ca_chain) {
-    cert.intermediateChain = serverCertData.ca_chain;
-    cert.intermediateChainInfo = cert.intermediateChain.map(pkiEngine.getCertInfo);
+    // cert.intermediateChain = serverCertData.ca_chain;
+    cert.intermediateChain = serverCertData.ca_chain[0]; // custom
+    cert.intermediateChainInfo = pkiEngine.getCertInfo(cert.intermediateChain)
+    // cert.intermediateChainInfo = cert.intermediateChain.map(pkiEngine.getCertInfo);
   }
   cert.serverCertificate = serverCertData.certificate;
   cert.serverCertificateInfo = pkiEngine.getCertInfo(cert.serverCertificate);
   cert.serverCertificateInfo.serialNumber = serverCertData.serial_number;
-
   const { validations, validationState } = await pkiEngine.validateServerCertificate(cert.serverCertificate, cert.intermediateChain, cert.rootCertificate);
+  console.log('csrParameters serverCertData', validationState, cert)
   const certData = {
     ...cert,
     validations,
@@ -94,7 +99,7 @@ exports.createHubServerCerts = async (ctx) => {
   return certData;
 };
 // custom
-exports.createHubServerCertsCustom = async (ctx, body) => { // custom
+exports.createHubServerCerts_1 = async (ctx, body) => { // custom
   const { pkiEngine } = ctx;
   const cert = {};
   // const serverCertData = await pkiEngine.createHubServerCert(Constants.serverCsrParameters);
