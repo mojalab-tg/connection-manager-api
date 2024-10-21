@@ -21,32 +21,32 @@ const utils = require('../utils/writer.js');
 const ServerCertsService = require('../service/ServerCertsService');
 
 exports.createHubServerCerts = (req, res, next) => {
-  console.log('createHubServerCerts');
-  ServerCertsService.createHubServerCerts(req.context)
-    .then(response => {
-      utils.writeJson(res, response);
-    })
-    .catch(response => {
-      utils.writeJson(res, response, response.status);
-    });
+    console.log(req);
+    ServerCertsService.createHubServerCerts(req.context)
+        .then(response => {
+            utils.writeJson(res, response);
+        })
+        .catch(response => {
+            utils.writeJson(res, response, response.status);
+        });
 };
 
 exports.getHubServerCerts = (req, res, next) => {
-  ServerCertsService.getHubServerCerts(req.context)
-    .then(response => {
-      utils.writeJson(res, response);
-    })
-    .catch(response => {
-      utils.writeJson(res, response, response.status);
-    });
+    ServerCertsService.getHubServerCerts(req.context)
+        .then(response => {
+            utils.writeJson(res, response);
+        })
+        .catch(response => {
+            utils.writeJson(res, response, response.status);
+        });
 };
 
 exports.deleteHubServerCerts = (req, res, next) => {
-  ServerCertsService.deleteHubServerCerts(req.context)
-    .then(response => {
-      utils.writeJson(res, response);
-    })
-    .catch(response => {
-      utils.writeJson(res, response, response.status);
-    });
+    ServerCertsService.deleteHubServerCerts(req.context)
+        .then(response => {
+            utils.writeJson(res, response);
+        })
+        .catch(response => {
+            utils.writeJson(res, response, response.status);
+        });
 };
