@@ -41,6 +41,7 @@ exports.createCSRAndDFSPOutboundEnrollment = async (ctx, dfspId, body) => {
   };
   // console.log('createCSRAndDFSPOutboundEnrollment csr', csr);
   const dbDfspId = await DFSPModel.findIdByDfspId(dfspId);
+  // custom code
   // await pkiEngine.createCSRAndSignWithVault(csr, privateKey, dfspId, dbDfspId);
   await pkiEngine.setDFSPOutboundEnrollment(dbDfspId, values.id, values);
   const { key, ...en } = values;

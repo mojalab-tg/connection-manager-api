@@ -50,25 +50,27 @@ exports.getDFSPs = (req, res, next) => {
         });
 };
 
-exports.setDFSPca = (req, res, next, body, dfspId) => {
-    console.log("body", body);
-    Pki.setDFSPca(req.context, dfspId, body)
-        .then(response => {
-            utils.writeJson(res, response);
-        })
-        .catch(response => {
-            utils.writeJson(res, response, response.status);
-        });
+// custom
+exports.setDFSPca = (req, res, next,body, dfspId) => {
+  console.log('setDFSPca pki custom', dfspId, body);
+  Pki.setDFSPca(req.context, body, dfspId)
+    .then(response => {
+      utils.writeJson(res, response);
+    })
+    .catch(response => {
+      utils.writeJson(res, response, response.status);
+    });
 };
 
 exports.getDFSPca = (req, res, next, dfspId) => {
-    Pki.getDFSPca(req.context, dfspId)
-        .then(response => {
-            utils.writeJson(res, response);
-        })
-        .catch(response => {
-            utils.writeJson(res, response, response.status);
-        });
+  console.log('getDFSPca pki', dfspId);
+  Pki.getDFSPca(req.context, dfspId)
+    .then(response => {
+      utils.writeJson(res, response);
+    })
+    .catch(response => {
+      utils.writeJson(res, response, response.status);
+    });
 };
 
 exports.updateDFSP = (req, res, next, body, dfspId) => {

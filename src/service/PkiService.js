@@ -118,19 +118,20 @@ exports.validateDfsp = async(ctx, dfspId) => exports.getDFSPById(ctx, dfspId);
  * dfspId String ID of dfsp
  * returns DFSP
  **/
-exports.getDFSPById = async(ctx, dfspId) => {
-    if (dfspId === null || typeof dfspId === 'undefined') {
-        throw new ValidationError(`Invalid dfspId ${dfspId}`);
+exports.getDFSPById = async (ctx, dfspId) => {
+  if (dfspId === null || typeof dfspId === 'undefined') {
+    throw new ValidationError(`Invalid dfspId ${dfspId}`);
+  }
+  console.log('getDFSPById dfspId', dfspId);
+  try {
+    const result = await DFSPModel.findByDfspId(dfspId);
+    return dfspRowToObject(result);
+  } catch (error) {
+    if (error instanceof NotFoundError) {
+      throw new NotFoundError(`DFSP with id ${dfspId} not found`);
     }
-    try {
-        const result = await DFSPModel.findByDfspId(dfspId);
-        return dfspRowToObject(result);
-    } catch (error) {
-        if (error instanceof NotFoundError) {
-            throw new NotFoundError(`DFSP with id ${dfspId} not found`);
-        }
-        throw error;
-    }
+    throw error;
+  }
 };
 
 exports.updateDFSP = async(ctx, dfspId, newDfsp) => {
@@ -175,9 +176,10 @@ exports.deleteDFSP = async(ctx, dfspId) => {
  * rootCertificate: a root certificate used by the DFSP. Can be a self-signed certificate, or a globally trusted CA like Digicert.
  * intermediateChain: list of intermediate certificates.
  */
-exports.setDFSPca = async(ctx, dfspId, body) => {
-    console.log("body", body);
-    await exports.validateDfsp(ctx, dfspId);
+// custom
+exports.setDFSPca = async (ctx,body, dfspId) => {
+  console.log('setDFSPca pki service =====', dfspId, body);
+  await exports.validateDfsp(ctx, dfspId);
 
     const rootCertificate = body.rootCertificate || '';
     const intermediateChain = body.intermediateChain || '';
@@ -236,11 +238,11 @@ exports.deleteDFSPca = async(ctx, dfspId) => {
  * @param {RowObject} row RowObject as returned by the DFSPModel or knex
  */
 const dfspRowToObject = (row) => {
-    return {
-        id: row.dfsp_id,
-        name: row.name,
-        monetaryZoneId: row.monetaryZoneId ? row.monetaryZoneId : undefined,
-        isProxy: row.isProxy,
-        securityGroup: row.security_group,
-    };
+  return {
+    id: row.dfsp_id,
+    name: row.name,
+    monetaryZoneId: row.monetaryZoneId ? row.monetaryZoneId : undefined,
+    isProxy: row.isProxy,
+    securityGroup: row.security_group,
+  };
 };

@@ -21,6 +21,7 @@ const PkiService = require('./PkiService');
 const ValidationError = require('../errors/ValidationError');
 const Constants = require('../constants/Constants');
 
+// custom dfsp
 exports.createDfspServerCerts = async (ctx, dfspId, body) => {
   if (body === null || typeof body === 'undefined') {
     throw new ValidationError(`Invalid body ${body}`);
@@ -85,6 +86,38 @@ exports.createHubServerCerts = async (ctx) => {
   const { validations, validationState } = await pkiEngine.validateServerCertificate(cert.serverCertificate, cert.intermediateChain, cert.rootCertificate);
   const certData = {
     ...cert,
+    validations,
+    validationState,
+  };
+
+  await pkiEngine.setHubServerCert(certData);
+  return certData;
+};
+// custom
+exports.createHubServerCertsCustom = async (ctx, body) => { // custom
+  const { pkiEngine } = ctx;
+  const cert = {};
+  // const serverCertData = await pkiEngine.createHubServerCert(Constants.serverCsrParameters);
+  // const serverCertificateInfo = pkiEngine.getCertInfo(body.serverCertificate)
+  // const serverCertData = await pkiEngine.createHubServerCert(serverCertificateInfo);
+  // cert.rootCertificate = body.rootCertificate
+  // cert.intermediateChain = body.intermediateChain
+  // cert.rootCertificateInfo = pkiEngine.getCertInfo(body.rootCertificate);
+  // cert.intermediateChainInfo = pkiEngine.getCertInfo(body.intermediateChain);
+  // console.log('cert.rootCertificate', cert.rootCertificate);
+  // console.log('rootCertificateInfo', rootCertificateInfo);
+  // if (serverCertData &&serverCertData.ca_chain) {
+  //   cert.intermediateChain = serverCertData.ca_chain;
+  //   cert.intermediateChainInfo = cert.intermediateChain.map(pkiEngine.getCertInfo);
+  // }
+  // console.log('serverCertData', cert);
+  // cert.serverCertificate = body.serverCertificate
+  // cert.serverCertificateInfo = pkiEngine.getCertInfo(body.serverCertificate);
+  // cert.serverCertificateInfo.serialNumber = serverCertData.serial_number;
+
+  const { validations, validationState } = await pkiEngine.validateServerCertificate(body.serverCertificate, body.intermediateChain, body.rootCertificate);
+  const certData = {
+    ...formatBody(body, pkiEngine),
     validations,
     validationState,
   };

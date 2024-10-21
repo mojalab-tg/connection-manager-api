@@ -104,10 +104,10 @@ class VaultPKIEngine extends PKIEngine {
         return this.client.write(path, value);
     }
 
-    validateId(id, name) {
-        console.log('populateDFSPClientCertBundle validateId', isNaN(id), id, name);
-        if (isNaN(id)) throw new Error(`${name} is not a number`);
-    }
+  validateId (id, name) {
+    console.log('populateDFSPClientCertBundle validateId', isNaN(id), id, name);
+    if (isNaN(id)) throw new Error(`${name} is not a number`);
+  }
 
     async getSecret(key) {
         const path = `${this.mounts.kv}/${key}`;
@@ -439,6 +439,34 @@ class VaultPKIEngine extends PKIEngine {
         });
         return data;
     }
+  /**
+   * Creates hub server certificate
+   * @param csrParameters. CSR options, @see CAInitialInfo
+   */
+  async createHubServerCert (csrParameters) {
+    const reqJson = {
+      common_name: csrParameters.subject.CN,
+    };
+    if (csrParameters.extensions?.subjectAltName) {
+      const { dns, ips } = csrParameters.extensions.subjectAltName;
+      if (dns) {
+        reqJson.alt_names = dns.join(',');
+      }
+      if (ips) {
+        reqJson.ip_sans = ips.join(',');
+      }
+    }
+    try {
+      const { data } = await this.client.request({
+        path: `/${this.mounts.pki}/issue/${this.pkiServerRole}`,
+        method: 'POST',
+        json: reqJson,
+      });
+      return data;
+    } catch (error) {
+      console.error('Error creating hub server certificate:', error); 
+    }
+  }
 
     async revokeHubServerCert(serial) {
         const { data } = await this.client.request({
@@ -472,55 +500,55 @@ class VaultPKIEngine extends PKIEngine {
      * Creates intermediate CA CSR
      * @param params. CSR options, @see CAInitialInfo
      */
-    async createIntermediateHubCSR(params) {
-        const { names } = params;
-        const altNames = names.length > 1 ? names.slice(1).map((name) => name.CN).join(',') : '';
-        const { data } = await this.client.request({
-            path: `/${this.mounts.intermediatePki}/intermediate/generate/exported`,
-            method: 'POST',
-            json: {
-                common_name: names[0].CN,
-                alt_names: altNames,
-                ou: names.map((name) => name.OU),
-                organization: names.map((name) => name.O),
-                locality: names.map((name) => name.L),
-                country: names.map((name) => name.C),
-                province: names.map((name) => name.ST),
-                key_type: params.key.algo,
-                key_bits: params.key.size,
-            },
-        });
-        return data;
-    }
+  async createIntermediateHubCSR (params) {
+    const { names } = params;
+    const altNames = names.length > 1 ? names.slice(1).map((name) => name.CN).join(',') : '';
+    const { data } = await this.client.request({
+      path: `/${this.mounts.intermediatePki}/intermediate/generate/exported`,
+      method: 'POST',
+      json: {
+        common_name: names[0].CN,
+        alt_names: altNames,
+        ou: names.map((name) => name.OU),
+        organization: names.map((name) => name.O),
+        locality: names.map((name) => name.L),
+        country: names.map((name) => name.C),
+        province: names.map((name) => name.ST),
+        key_type: params.key.algo,
+        key_bits: params.key.size,
+      },
+    });
+    return data;
+  }
 
-    /**
-     *
-     * @param {CSRParameters} csrParameters CSR Parameters
-     * @returns { csr: String, key:  String, PEM-encoded. Encrypted ( see encryptKey ) }
-     */
-    async createCSR(csrParameters) {
-        const keys = forge.pki.rsa.generateKeyPair(this.keyLength);
-        const csr = forge.pki.createCertificationRequest();
-        csr.publicKey = keys.publicKey;
-        if (csrParameters?.subject) {
-            csr.setSubject(Object.entries(csrParameters.subject).map(([shortName, value]) => ({
-                shortName,
-                value
-            })));
-        }
-        if (csrParameters?.extensions?.subjectAltName) {
-            const { dns, ips } = csrParameters.extensions.subjectAltName;
-            csr.setAttributes([{
-                name: 'extensionRequest',
-                extensions: [{
-                    name: 'subjectAltName',
-                    altNames: [
-                        ...dns ? dns.map(value => ({ type: VaultPKIEngine.DNS_TYPE, value })) : [],
-                        ...ips ? ips.map(value => ({ type: VaultPKIEngine.IP_TYPE, value })) : []
-                    ]
-                }]
-            }]);
-        }
+  /**
+   *
+   * @param {CSRParameters} csrParameters CSR Parameters
+   * @returns { csr: String, key:  String, PEM-encoded. Encrypted ( see encryptKey ) }
+   */
+  async createCSR (csrParameters) {
+    const keys = forge.pki.rsa.generateKeyPair(this.keyLength);
+    const csr = forge.pki.createCertificationRequest();
+    csr.publicKey = keys.publicKey;
+    if (csrParameters?.subject) {
+      csr.setSubject(Object.entries(csrParameters.subject).map(([shortName, value]) => ({
+        shortName,
+        value
+      })));
+    }
+    if (csrParameters?.extensions?.subjectAltName) {
+      const { dns, ips } = csrParameters.extensions.subjectAltName;
+      csr.setAttributes([{
+        name: 'extensionRequest',
+        extensions: [{
+          name: 'subjectAltName',
+          altNames: [
+            ...dns ? dns.map(value => ({ type: VaultPKIEngine.DNS_TYPE, value })) : [],
+            ...ips ? ips.map(value => ({ type: VaultPKIEngine.IP_TYPE, value })) : []
+          ]
+        }]
+      }]);
+    }
 
         csr.sign(keys.privateKey, forge.md.sha256.create());
 
@@ -585,6 +613,26 @@ class VaultPKIEngine extends PKIEngine {
         console.log("data", data);
         return data.certificate;
     }
+  /**
+   * Sign Client (DFSP) CSR and return client certificate
+   * @param csr
+   * @param commonName
+   * @returns {Promise<*>}
+   */
+  async sign (csr, commonName) {
+    console.log('csr, commonName', csr, commonName)
+    console.log('csr, commonName url', `/${this.mounts.pki}/sign/${this.pkiClientRole}`)
+    const { data } = await this.client.request({
+      path: `/${this.mounts.pki}/sign/${this.pkiClientRole}`, // custom example.com
+      method: 'POST',
+      json: {
+        common_name: commonName,
+        csr,
+        ttl: `${this.signExpiryHours}h`,
+      },
+    });
+    return data.certificate;
+  }
 
     async setHubCaCertChain(certChainPem, privateKeyPem) {
         await this.client.request({

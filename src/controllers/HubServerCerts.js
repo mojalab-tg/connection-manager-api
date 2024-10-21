@@ -20,15 +20,15 @@
 const utils = require('../utils/writer.js');
 const ServerCertsService = require('../service/ServerCertsService');
 
-exports.createHubServerCerts = (req, res, next) => {
-    console.log(req);
-    ServerCertsService.createHubServerCerts(req.context)
-        .then(response => {
-            utils.writeJson(res, response);
-        })
-        .catch(response => {
-            utils.writeJson(res, response, response.status);
-        });
+exports.createHubServerCerts = (req, res, next, body) => {
+  
+  ServerCertsService.createHubServerCerts(req.context, body) // custom
+    .then(response => {
+      utils.writeJson(res, response);
+    })
+    .catch(response => {
+      utils.writeJson(res, response, response.status);
+    });
 };
 
 exports.getHubServerCerts = (req, res, next) => {

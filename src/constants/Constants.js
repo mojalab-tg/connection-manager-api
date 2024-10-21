@@ -78,108 +78,90 @@ if (certManager.enabled) {
 }
 
 module.exports = {
-    SERVER: {
-        PORT: env.get('PORT').default('3001').asPortNumber(),
-    },
+  SERVER: {
+    PORT: env.get('PORT').default('3001').asPortNumber(),
+  },
 
-    OAUTH: {
-        AUTH_ENABLED: env.get('AUTH_ENABLED').default('false').asBool(),
-        APP_OAUTH_CLIENT_KEY: env.get('APP_OAUTH_CLIENT_KEY').asString(), // Configured in WSO2 IM Service Provider
-        APP_OAUTH_CLIENT_SECRET: env.get('APP_OAUTH_CLIENT_SECRET').asString(),
-        MTA_ROLE: env.get('MTA_ROLE').default('Application/MTA').asString(),
-        PTA_ROLE: env.get('PTA_ROLE').default('Application/PTA').asString(),
-        EVERYONE_ROLE: env
-            .get('EVERYONE_ROLE')
-            .default('Internal/everyone')
-            .asString(),
-        OAUTH2_ISSUER: env
-            .get('OAUTH2_ISSUER')
-            .default('https://WSO2_IM_SERVER:9443/oauth2/token')
-            .asString(),
-        OAUTH2_TOKEN_ISS: env.get('OAUTH2_TOKEN_ISS').asString(),
-        CERTIFICATE_FILE_NAME: env
-            .get('CERTIFICATE_FILE_NAME')
-            .default('resources/wso2carbon-publickey.cert')
-            .asString(),
-        EMBEDDED_CERTIFICATE: env.get('EMBEDDED_CERTIFICATE').asString(),
-        JWT_COOKIE_NAME: 'MCM-API_ACCESS_TOKEN',
-        RESET_PASSWORD_ISSUER: env.get('OAUTH_RESET_PASSWORD_ISSUER').asString(),
-        RESET_PASSWORD_AUTH_USER: env
-            .get('OAUTH_RESET_PASSWORD_AUTH_USER')
-            .asString(),
-        RESET_PASSWORD_AUTH_PASSWORD: env
-            .get('OAUTH_RESET_PASSWORD_AUTH_PASSWORD')
-            .asString(),
-    },
+  OAUTH: {
+    AUTH_ENABLED: env.get('AUTH_ENABLED').default('false').asBool(),
+    APP_OAUTH_CLIENT_KEY: env.get('APP_OAUTH_CLIENT_KEY').asString(), // Configured in WSO2 IM Service Provider
+    APP_OAUTH_CLIENT_SECRET: env.get('APP_OAUTH_CLIENT_SECRET').asString(),
+    MTA_ROLE: env.get('MTA_ROLE').default('Application/MTA').asString(),
+    PTA_ROLE: env.get('PTA_ROLE').default('Application/PTA').asString(),
+    EVERYONE_ROLE: env
+      .get('EVERYONE_ROLE')
+      .default('Internal/everyone')
+      .asString(),
+    OAUTH2_ISSUER: env
+      .get('OAUTH2_ISSUER')
+      .default('https://WSO2_IM_SERVER:9443/oauth2/token')
+      .asString(),
+    OAUTH2_TOKEN_ISS: env.get('OAUTH2_TOKEN_ISS').asString(),
+    CERTIFICATE_FILE_NAME: env
+      .get('CERTIFICATE_FILE_NAME')
+      .default('resources/wso2carbon-publickey.cert')
+      .asString(),
+    EMBEDDED_CERTIFICATE: env.get('EMBEDDED_CERTIFICATE').asString(),
+    JWT_COOKIE_NAME: 'MCM-API_ACCESS_TOKEN',
+    RESET_PASSWORD_ISSUER: env.get('OAUTH_RESET_PASSWORD_ISSUER').asString(),
+    RESET_PASSWORD_AUTH_USER: env
+      .get('OAUTH_RESET_PASSWORD_AUTH_USER')
+      .asString(),
+    RESET_PASSWORD_AUTH_PASSWORD: env
+      .get('OAUTH_RESET_PASSWORD_AUTH_PASSWORD')
+      .asString(),
+  },
 
-    EXTRA_TLS: {
-        EXTRA_CERTIFICATE_CHAIN_FILE_NAME: env.get('EXTRA_CERTIFICATE_CHAIN_FILE_NAME').asString(),
-        EXTRA_ROOT_CERT_FILE_NAME: env.get('EXTRA_ROOT_CERT_FILE_NAME').asString(),
-    },
+  EXTRA_TLS: {
+    EXTRA_CERTIFICATE_CHAIN_FILE_NAME: env.get('EXTRA_CERTIFICATE_CHAIN_FILE_NAME').asString(),
+    EXTRA_ROOT_CERT_FILE_NAME: env.get('EXTRA_ROOT_CERT_FILE_NAME').asString(),
+  },
 
-    AUTH_2FA: {
-        AUTH_2FA_ENABLED: env.get('AUTH_2FA_ENABLED').default('false').asBool(),
-        TOTP_ADMIN_ISSUER: env.get('TOTP_ADMIN_ISSUER').asString(),
-        TOTP_ADMIN_AUTH_USER: env.get('TOTP_ADMIN_AUTH_USER').asString(),
-        TOTP_ADMIN_AUTH_PASSWORD: env.get('TOTP_ADMIN_AUTH_PASSWORD').asString(),
-        TOTP_LABEL: env.get('TOTP_LABEL').asString(),
-        TOTP_ISSUER: env.get('TOTP_ISSUER').default('MCM').asString(),
-        WSO2_MANAGER_SERVICE_URL: env.get('WSO2_MANAGER_SERVICE_URL').asString(),
-        WSO2_MANAGER_SERVICE_USER: env.get('WSO2_MANAGER_SERVICE_USER').asString(),
-        WSO2_MANAGER_SERVICE_PASSWORD: env.get('WSO2_MANAGER_SERVICE_PASSWORD').asString(),
-    },
+  AUTH_2FA: {
+    AUTH_2FA_ENABLED: env.get('AUTH_2FA_ENABLED').default('false').asBool(),
+    TOTP_ADMIN_ISSUER: env.get('TOTP_ADMIN_ISSUER').asString(),
+    TOTP_ADMIN_AUTH_USER: env.get('TOTP_ADMIN_AUTH_USER').asString(),
+    TOTP_ADMIN_AUTH_PASSWORD: env.get('TOTP_ADMIN_AUTH_PASSWORD').asString(),
+    TOTP_LABEL: env.get('TOTP_LABEL').asString(),
+    TOTP_ISSUER: env.get('TOTP_ISSUER').default('MCM').asString(),
+    WSO2_MANAGER_SERVICE_URL: env.get('WSO2_MANAGER_SERVICE_URL').asString(),
+    WSO2_MANAGER_SERVICE_USER: env.get('WSO2_MANAGER_SERVICE_USER').asString(),
+    WSO2_MANAGER_SERVICE_PASSWORD: env.get('WSO2_MANAGER_SERVICE_PASSWORD').asString(),
+  },
 
-    DATABASE: {
-        DATABASE_HOST: env.get('DATABASE_HOST').default('localhost').asString(),
-        DATABASE_PORT: env.get('DATABASE_PORT').default(3306).asPortNumber(),
-        DATABASE_USER: env.get('DATABASE_USER').default('mcm').asString(),
-        DATABASE_PASSWORD: env.get('DATABASE_PASSWORD').default('mcm').asString(),
-        DATABASE_SCHEMA: env.get('DATABASE_SCHEMA').default('mcm').asString(),
-        DB_RETRIES: env.get('DB_RETRIES').default('10').asInt(),
-        DB_CONNECTION_RETRY_WAIT_MILLISECONDS: env
-            .get('DB_CONNECTION_RETRY_WAIT_MILLISECONDS')
-            .default('1000')
-            .asInt(),
-    },
-    switchFQDN: env.get('SWITCH_FQDN').default('switch.example.com').asString(),
-    switchId: env.get('SWITCH_ID').required().default('example.com').asString(),
+  DATABASE: {
+    DATABASE_HOST: env.get('DATABASE_HOST').default('localhost').asString(),
+    DATABASE_PORT: env.get('DATABASE_PORT').default(3306).asPortNumber(),
+    DATABASE_USER: env.get('DATABASE_USER').default('mcm').asString(),
+    DATABASE_PASSWORD: env.get('DATABASE_PASSWORD').default('mcm').asString(),
+    DATABASE_SCHEMA: env.get('DATABASE_SCHEMA').default('mcm').asString(),
+    DB_RETRIES: env.get('DB_RETRIES').default('10').asInt(),
+    DB_CONNECTION_RETRY_WAIT_MILLISECONDS: env
+      .get('DB_CONNECTION_RETRY_WAIT_MILLISECONDS')
+      .default('1000')
+      .asInt(),
+  },
+  switchFQDN: env.get('SWITCH_FQDN').default('hub.example.com').asString(),
+  switchId: env.get('SWITCH_ID').required().default('example.com').asString(),
 
-    vault: {
-        endpoint: env.get('VAULT_ENDPOINT').default('http://vault-dev:8233').asString(),
-        mounts: {
-            pki: env.get('VAULT_MOUNT_PKI').default('pki').asString(),
-            intermediatePki: env.get('VAULT_MOUNT_INTERMEDIATE_PKI').default('pki_int').asString(),
-            kv: env.get('VAULT_MOUNT_KV').default('secrets').asString(),
-            dfspClientCertBundle: env.get('VAULT_MOUNT_DFSP_CLIENT_CERT_BUNDLE').default('onboarding_pm4mls').asString(),
-            dfspInternalIPWhitelistBundle: env.get('VAULT_MOUNT_DFSP_INT_IP_WHITELIST_BUNDLE').default('whitelist_pm4mls').asString(),
-            dfspExternalIPWhitelistBundle: env.get('VAULT_MOUNT_DFSP_EXT_IP_WHITELIST_BUNDLE').default('whitelist_fsps').asString(),
-        },
-        pkiServerRole: env.get('VAULT_PKI_SERVER_ROLE').required().asString(),
-        pkiClientRole: env.get('VAULT_PKI_CLIENT_ROLE').required().asString(),
-        auth: vaultAuth,
-        signExpiryHours: env.get('VAULT_SIGN_EXPIRY_HOURS').default('43800').asString(),
-        keyLength: env.get('PRIVATE_KEY_LENGTH').default(4096).asIntPositive(),
-        keyAlgorithm: env.get('PRIVATE_KEY_ALGORITHM').default('rsa').asString(),
+  vault: {
+    endpoint: env.get('VAULT_ENDPOINT').default('http://vault-dev:8233').asString(),
+    mounts: {
+      pki: env.get('VAULT_MOUNT_PKI').default('pki').asString(),
+      intermediatePki: env.get('VAULT_MOUNT_INTERMEDIATE_PKI').default('pki_int').asString(),
+      kv: env.get('VAULT_MOUNT_KV').default('secrets').asString(),
+      dfspClientCertBundle: env.get('VAULT_MOUNT_DFSP_CLIENT_CERT_BUNDLE').default('onboarding_pm4mls').asString(),
+      dfspInternalIPWhitelistBundle: env.get('VAULT_MOUNT_DFSP_INT_IP_WHITELIST_BUNDLE').default('whitelist_pm4mls').asString(),
+      dfspExternalIPWhitelistBundle: env.get('VAULT_MOUNT_DFSP_EXT_IP_WHITELIST_BUNDLE').default('whitelist_fsps').asString(),
     },
-    certManager,
-    vault: {
-        endpoint: env.get('VAULT_ENDPOINT').default('http://vault-dev:8233').asString(),
-        mounts: {
-            pki: env.get('VAULT_MOUNT_PKI').default('pki').asString(),
-            intermediatePki: env.get('VAULT_MOUNT_INTERMEDIATE_PKI').default('pki_int').asString(),
-            kv: env.get('VAULT_MOUNT_KV').default('secrets').asString(),
-            dfspClientCertBundle: env.get('VAULT_MOUNT_DFSP_CLIENT_CERT_BUNDLE').default('onboarding_pm4mls').asString(),
-            dfspInternalIPWhitelistBundle: env.get('VAULT_MOUNT_DFSP_INT_IP_WHITELIST_BUNDLE').default('whitelist_pm4mls').asString(),
-            dfspExternalIPWhitelistBundle: env.get('VAULT_MOUNT_DFSP_EXT_IP_WHITELIST_BUNDLE').default('whitelist_fsps').asString(),
-        },
-        pkiServerRole: env.get('VAULT_PKI_SERVER_ROLE').required().asString(),
-        pkiClientRole: env.get('VAULT_PKI_CLIENT_ROLE').required().asString(),
-        auth: vaultAuth,
-        signExpiryHours: env.get('VAULT_SIGN_EXPIRY_HOURS').default('43800').asString(),
-        keyLength: env.get('PRIVATE_KEY_LENGTH').default(4096).asIntPositive(),
-        keyAlgorithm: env.get('PRIVATE_KEY_ALGORITHM').default('rsa').asString(),
-    },
-    certManager,
+    pkiServerRole: env.get('VAULT_PKI_SERVER_ROLE').default('my-role').required().asString(),
+    pkiClientRole: env.get('VAULT_PKI_CLIENT_ROLE').default('my-role').required().asString(),
+    auth: vaultAuth,
+    signExpiryHours: env.get('VAULT_SIGN_EXPIRY_HOURS').default('43800').asString(),
+    keyLength: env.get('PRIVATE_KEY_LENGTH').default(4096).asIntPositive(),
+    keyAlgorithm: env.get('PRIVATE_KEY_ALGORITHM').default('rsa').asString(),
+  },
+  certManager,
 
     auth: {
         enabled: env.get('AUTH_ENABLED').asBoolStrict(),

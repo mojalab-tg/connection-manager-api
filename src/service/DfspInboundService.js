@@ -33,9 +33,11 @@ const DFSPModel = require("../models/DFSPModel");
  * body DFSPInboundCreate DFSP inbound initial info
  * returns ObjectCreatedResponse
  **/
-exports.createDFSPInboundEnrollment = async(ctx, dfspId, body) => {
-    const { pkiEngine } = ctx;
-    await PkiService.validateDfsp(ctx, dfspId);
+exports.createDFSPInboundEnrollment = async (ctx, dfspId, body) => {
+  console.log('createDFSPInboundEnrollment',  dfspId, body);
+
+  const { pkiEngine } = ctx;
+  await PkiService.validateDfsp(ctx, dfspId);
 
     let csrInfo;
     try {
@@ -102,25 +104,20 @@ exports.getDFSPInboundEnrollment = async(ctx, dfspId, enId) => {
 exports.signDFSPInboundEnrollment = async(ctx, dfspId, enId) => {
     await PkiService.validateDfsp(ctx, dfspId);
 
-    const { pkiEngine } = ctx;
-    const dbDfspId = await DFSPModel.findIdByDfspId(dfspId);
-    const enrollment = await pkiEngine.getDFSPInboundEnrollment(dbDfspId, enId);
+  const { pkiEngine } = ctx;
+  const dbDfspId = await DFSPModel.findIdByDfspId(dfspId);
+  const enrollment = await pkiEngine.getDFSPInboundEnrollment(dbDfspId, enId);
+  // console.log('signDFSPInboundEnrollment', dbDfspId, enrollment, dfspId, enId)
+  if (!enrollment) {
+    throw new InvalidEntityError(`Could not retrieve current CA for the endpoint ${enId}, dfsp id ${dfspId}`);
+  }
 
-    if (!enrollment) {
-        throw new InvalidEntityError(
-            `Could not retrieve current CA for the endpoint ${enId}, dfsp id ${dfspId}`
-        );
-    }
+  const { csr } = enrollment;
+  
 
-    const { csr } = enrollment;
-
-    const newCert = await pkiEngine.sign(csr, Constants.switchFQDN);
-
-    console.log("newCert", newCert);
-
-    const certInfo = pkiEngine.getCertInfo(newCert);
-
-    console.log("certInfo", certInfo);
+  const newCert = await pkiEngine.sign(csr, Constants.switchFQDN);
+  console.log('signDFSPInboundEnrollment newCert', newCert);
+  const certInfo = pkiEngine.getCertInfo(newCert);
 
     const inboundEnrollment = {
         csr,

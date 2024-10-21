@@ -157,8 +157,10 @@ const createOAuth2Handler = () => {
     })(req));
 
   return async (req, scopes, schema) => {
+    console.log('createOAuth2Handler', req);
     const user = req.user;
     const authInfo = await authenticate(req);
+    console.log('authenticate', authInfo, req.openapi);
     const apiPath = req.openapi?.openApiRoute;
     const originalUrl = req.originalUrl;
     let error = null;
