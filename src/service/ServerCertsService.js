@@ -77,7 +77,7 @@ exports.createHubServerCerts= async (ctx, body) => {
   
   cert.rootCertificate = await pkiEngine.getRootCaCert();
   cert.rootCertificateInfo = pkiEngine.getCertInfo(cert.rootCertificate);
-  console.log('csrParameters serverCertData', serverCertData.ca_chain)
+  // console.log('csrParameters serverCertData', serverCertData.ca_chain)
   if (serverCertData.ca_chain) {
     // cert.intermediateChain = serverCertData.ca_chain;
     cert.intermediateChain = serverCertData.ca_chain[0]; // custom
@@ -88,7 +88,7 @@ exports.createHubServerCerts= async (ctx, body) => {
   cert.serverCertificateInfo = pkiEngine.getCertInfo(cert.serverCertificate);
   cert.serverCertificateInfo.serialNumber = serverCertData.serial_number;
   const { validations, validationState } = await pkiEngine.validateServerCertificate(cert.serverCertificate, cert.intermediateChain, cert.rootCertificate);
-  console.log('csrParameters serverCertData', validationState, cert)
+  console.log('csrParameters serverCertData', validationState)
   const certData = {
     ...cert,
     validations,

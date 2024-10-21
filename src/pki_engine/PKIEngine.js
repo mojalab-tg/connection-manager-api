@@ -117,6 +117,7 @@ class PKIEngine {
    */
   validateServerCertificate (serverCert, intermediateChain, rootCertificate) {
     const validationCodes = this.validationConfig.serverCertValidations;
+    console.table('validationCodes', validationCodes)
     return this.performCertificateValidations(validationCodes, serverCert, intermediateChain, rootCertificate);
   }
 
