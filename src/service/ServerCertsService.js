@@ -72,7 +72,7 @@ exports.getAllDfspServerCerts = async (ctx) => {
 exports.createHubServerCerts= async (ctx, body) => {
   const { pkiEngine } = ctx;
   const cert = {};
-  cert.serverCertificate = pkiEngine.getCertInfo(body.rootCertificate); // custom
+  cert.serverCertificate = pkiEngine.getCertInfo(body.serverCertificate); // custom
   const serverCertData = await pkiEngine.createHubServerCert(cert.serverCertificate);
   
   cert.rootCertificate = await pkiEngine.getRootCaCert();
