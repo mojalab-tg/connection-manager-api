@@ -95,7 +95,6 @@ exports.addDFSPOutboundEnrollmentCertificate = async (ctx, dfspId, enId, body) =
 
   const dbDfspId = await DFSPModel.findIdByDfspId(dfspId);
   const outboundEnrollment = await pkiEngine.getDFSPOutboundEnrollment(dbDfspId, enId);
-
   const dfspCA = await PkiService.getDFSPca(ctx, dfspId);
 
   const enrollment = {
@@ -106,7 +105,7 @@ exports.addDFSPOutboundEnrollmentCertificate = async (ctx, dfspId, enId, body) =
   };
 
   const { validations, validationState } = await pkiEngine.validateOutboundEnrollment(enrollment);
-
+  console.log('addDFSPOutboundEnrollmentCertificate validationState', validationState)
   const values = {
     ...outboundEnrollment,
     certificate,
@@ -115,7 +114,7 @@ exports.addDFSPOutboundEnrollmentCertificate = async (ctx, dfspId, enId, body) =
     validations,
     validationState
   };
-
+  console.log('addDFSPOutboundEnrollmentCertificate validationState state', values.state)
   await pkiEngine.setDFSPOutboundEnrollment(dbDfspId, values.id, values);
   const { key, ...en } = values;
   return en;

@@ -52,6 +52,7 @@ exports.getDFSPOutboundEnrollment = (req, res, next, dfspId, enId) => {
 };
 
 exports.addDFSPOutboundEnrollmentCertificate = (req, res, next, body, dfspId, enId) => {
+  console.log('addDFSPOutboundEnrollmentCertificate v1', body)
   DfspOutbound.addDFSPOutboundEnrollmentCertificate(req.context, dfspId, enId, body)
     .then(response => {
       utils.writeJson(res, response);

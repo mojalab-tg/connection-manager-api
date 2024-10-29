@@ -101,7 +101,8 @@ exports.findAllLatestByDirection = async (direction) => {
       WHERE ep_rank = 1
     ORDER BY dfsp_id;
   `);
-  const endpoints = Promise.all(rawObjects[0].map(row => rowToObject(row)));
+  // const endpoints = Promise.all(rawObjects[0].map(row => rowToObject(row)));
+  const endpoints = Promise.all(rawObjects[0].map(row => rowToObject({...row, value: JSON.parse(row.value)}))); // custom
   return endpoints;
 };
 

@@ -35,6 +35,7 @@ exports.onboardDFSP = async (ctx, dfspId) => {
   await pkiEngine.populateDFSPClientCertBundle(id, dfspId, monetaryZoneId, !!isProxy, fxpCurrencies);
   // console.log('onboardDFSP v1 populateDFSPClientCertBundle');
   const ipsBundle = await getIPsBundle();
+  // console.log('ipsBundle', ipsBundle)
   await pkiEngine.populateDFSPInternalIPWhitelistBundle(ipsBundle);
 
   // TODO: populate external IP whitelist

@@ -104,8 +104,8 @@ class VaultPKIEngine extends PKIEngine {
   }
 
   validateId (id, name) {
-    console.log('populateDFSPClientCertBundle validateId', isNaN(id), id, name);
     if (isNaN(id)) throw new Error(`${name} is not a number`);
+    console.log('validateId', isNaN(id), id, name);
   }
 
   async getSecret (key) {
@@ -180,7 +180,7 @@ class VaultPKIEngine extends PKIEngine {
 
   async getDFSPOutboundEnrollments (dfspId) {
     const secrets = await this.listSecrets(`${vaultPaths.DFSP_OUTBOUND_ENROLLMENT}/${dfspId}`);
-    // console.log('secrets', secrets);
+    console.log('secrets getDFSPOutboundEnrollments', secrets);
     return Promise.all(secrets.map(enId => this.getDFSPOutboundEnrollment(dfspId, enId)));
   }
   // endregion
@@ -344,9 +344,9 @@ class VaultPKIEngine extends PKIEngine {
   async populateDFSPClientCertBundle (dfspId, dfspName, dfspMonetaryZoneId, isProxy, fxpCurrencies) {
     this.validateId(dfspId, 'dfspId');
     const dfspCA = await this.getDFSPCA(dfspId);
-    console.log('populateDFSPClientCertBundle dfspCA',dfspCA);
+    // console.log('populateDFSPClientCertBundle dfspCA',dfspCA);
     const enrollments = await this.getDFSPOutboundEnrollments(dfspId);
-    console.log('populateDFSPClientCertBundle dfspCA',enrollments);
+    // console.log('populateDFSPClientCertBundle dfspCA',enrollments);
     const dfspClientCert = enrollments
       .filter((en) => en.state === 'CERT_SIGNED')
       .sort((a, b) => b.id - a.id)[0];

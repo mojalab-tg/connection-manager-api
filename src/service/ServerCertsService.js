@@ -26,6 +26,7 @@ exports.createDfspServerCerts = async (ctx, dfspId, body) => {
   if (body === null || typeof body === 'undefined') {
     throw new ValidationError(`Invalid body ${body}`);
   }
+  
   await PkiService.validateDfsp(ctx, dfspId);
   const { pkiEngine } = ctx;
   const { validations, validationState } = await pkiEngine.validateServerCertificate(body.serverCertificate, body.intermediateChain, body.rootCertificate);
