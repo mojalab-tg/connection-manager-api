@@ -572,8 +572,8 @@ class VaultPKIEngine extends PKIEngine {
    * @returns {Promise<*>}
    */
   async sign (csr, commonName) {
-    console.log('csr, commonName', csr, commonName)
-    console.log('csr, commonName url', `/${this.mounts.pki}/sign/${this.pkiClientRole}`)
+    // console.log('csr, commonName', csr, commonName)
+    // console.log('csr, commonName url', `/${this.mounts.pki}/sign/${this.pkiClientRole}`)
     const { data } = await this.client.request({
       path: `/${this.mounts.pki}/sign/${this.pkiClientRole}`, // custom example.com
       method: 'POST',
@@ -1068,7 +1068,7 @@ class VaultPKIEngine extends PKIEngine {
    */
   verifyCertKeyLength (cert, minLength) {
     const certInfo = this.getCertInfo(cert);
-    console.log('verifyCertKeyLength', certInfo.publicKeyLength, minLength)
+    // console.log('verifyCertKeyLength', certInfo.publicKeyLength, minLength)
     if (certInfo.publicKeyLength < minLength) {
       return { valid: false, reason: { actualKeySize: certInfo.publicKeyLength, minKeySize: minLength } };
     }

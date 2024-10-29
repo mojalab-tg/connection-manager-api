@@ -69,7 +69,7 @@ exports.createExternalHubCA = async (ctx, body) => {
     validations,
     validationState,
   };
-  console.log('ext certManager', validationState,);
+  // console.log('ext certManager', validationState,);
   if (validationState === ValidationCodes.VALID_STATES.VALID) {
     await pkiEngine.setHubCaCertChain(rootCertificate + intermediateChain, privateKey);
     console.log('ext setHubCACertDetails', info);
