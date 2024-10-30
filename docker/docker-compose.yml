@@ -14,10 +14,10 @@ services:
     restart: always
 
   connection-manager-api:
-    build:
-      context: ../
-      dockerfile: Dockerfile
-    image: connection-manager-api
+    # build:
+    #   context: ../
+    #   dockerfile: Dockerfile
+    image: mojalabtg/connection-manager-api:1.0.0
     hostname: connection-manager-api
     environment:
       - DATABASE_HOST=connection-manager-db
@@ -28,13 +28,16 @@ services:
       - PORT=3001
       - P12_PASS_PHRASE='SOME_S3C4R3_P@SS'
       - VAULT_AUTH_METHOD=APP_ROLE
-      - VAULT_ROLE_ID_FILE=./docker/vault/tmp/role-id
-      - VAULT_ROLE_SECRET_ID_FILE=./docker/vault/tmp/secret-id
+      - VAULT_ROLE_ID_FILE=/vault/tmp/role-id
+      - VAULT_ROLE_SECRET_ID_FILE=/vault/tmp/secret-id
       - SWITCH_ID=modus123
       - VAULT_PKI_CLIENT_ROLE=example.com
       - VAULT_PKI_SERVER_ROLE=example.com
       - VAULT_ADDR=http://vault-dev:8233
     tty: true
+    volumes:
+      - ./vault/tmp/role-id:/vault/tmp/role-id
+      - ./vault/tmp/secret-id:/vault/tmp/secret-id
     stdin_open: true  
     ports:
       - "3001:3001"
@@ -44,13 +47,14 @@ services:
       - vault-dev
 
   connection-manager-ui:
-    build:
-      context: ../../connection-manager-ui
-      dockerfile: Dockerfile
-      args:
-        - AUTH_ENABLED=FALSE
-        - REACT_APP_COMMIT=${REACT_APP_COMMIT:-unknown}
-        - REACT_APP_VERSION=${REACT_APP_VERSION:-unknown}
+    image: mojalabtg/connection-manager-ui:1.0.0
+    # build:
+    #   context: ../../connection-manager-ui
+    #   dockerfile: Dockerfile
+    #   args:
+    #     - AUTH_ENABLED=FALSE
+    #     - REACT_APP_COMMIT=${REACT_APP_COMMIT:-unknown}
+    #     - REACT_APP_VERSION=${REACT_APP_VERSION:-unknown}
     hostname: connection-manager-ui
     environment:
       - API_BASE_URL=http://localhost:3001

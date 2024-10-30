@@ -70,7 +70,7 @@ class VaultPKIEngine extends PKIEngine {
     let creds;
 
     clearTimeout(this.reconnectTimer);
-    // console.log('this.auth.appRole', this.auth.appRole);
+    console.log('this.auth.appRole', this.auth.appRole);
     if (this.auth.appRole) {
       creds = await this.vault.approleLogin({
         role_id: this.auth.appRole.roleId,
