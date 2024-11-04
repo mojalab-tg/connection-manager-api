@@ -19,8 +19,6 @@ COPY package*.json ./
 
 RUN npm ci --only=prod
 
-RUN npm install
-
 # My app sources
 COPY . .
 

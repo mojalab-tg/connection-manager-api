@@ -17,7 +17,7 @@ services:
     # build:
     #   context: ../
     #   dockerfile: Dockerfile
-    image: mojalabtg/connection-manager-api:1.0.0
+    image: mojalabtg/connection-manager-api:1.0.1
     hostname: connection-manager-api
     environment:
       - DATABASE_HOST=connection-manager-db
