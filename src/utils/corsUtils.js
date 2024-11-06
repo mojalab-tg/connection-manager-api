@@ -18,8 +18,8 @@
 'use strict';
 const Constants = require('../constants/Constants');
 
-const whitelist = ['http://devint1-pkiadminweb.casahub.live', 'https://devint1-pkiadminweb.casahub.live'];
-
+const whitelist = Constants.whitelistUrls; // ['http://devint1-pkiadminweb.casahub.live', 'https://devint1-pkiadminweb.casahub.live', "http://ui-mcm.mojalab.gouv.tg",  "https://ui-mcm.mojalab.gouv.tg"];
+console.log('whitelist whitelist', whitelist);
 exports.getCorsOptions = {
   credentials: true,
   origin: function (requestOrigin, callback) {

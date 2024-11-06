@@ -44,6 +44,7 @@ const env = from(process.env, {
   asFileListContent: (pathList) => pathList.split(',').map((path) => getFileContent(path)),
   asJsonConfig: (path) => JSON.parse(getFileContent(path)),
   asTextFileContent: (path) => getFileContent(path).toString().trim(),
+  asList: (data) => data.trim().split(',')
 });
 
 const vaultAuthMethod = env.get('VAULT_AUTH_METHOD').required().default(`APP_ROLE`).asEnum(['K8S', 'APP_ROLE']);
@@ -142,10 +143,12 @@ module.exports = {
       .asInt(),
   },
   switchFQDN: env.get('SWITCH_FQDN').default('hub.example.com').asString(),
+  hubCertTtl: env.get('HUB_CERT_TTL').default('8760h').asString(),
   switchId: env.get('SWITCH_ID').required().default('example.com').asString(),
+  whitelistUrls: env.get('WHITELIST_ORIGIN').default('example.com').asList(),
 
   vault: {
-    endpoint: env.get('VAULT_ENDPOINT').default('http://vault-dev:8233').asString(),
+    endpoint: env.get('VAULT_ENDPOINT').default('http://vault-mcm:8233').asString(),
     mounts: {
       pki: env.get('VAULT_MOUNT_PKI').default('pki').asString(),
       intermediatePki: env.get('VAULT_MOUNT_INTERMEDIATE_PKI').default('pki_int').asString(),

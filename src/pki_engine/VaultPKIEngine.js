@@ -20,6 +20,7 @@ const NotFoundError = require('../errors/NotFoundError');
 const tls = require('tls');
 const Joi = require('joi');
 const ValidationError = require('../errors/ValidationError');
+const Constants = require('../constants/Constants');
 
 // TODO: find and link document containing rules on allowable paths
 const vaultPaths = {
@@ -403,7 +404,7 @@ class VaultPKIEngine extends PKIEngine {
         province: csr.ST,
         key_type: this.keyAlgorithm,
         key_bits: this.keyLength,
-        ttl,
+        ttl: Constants.hubCertTtl, // custom
       },
     });
 
